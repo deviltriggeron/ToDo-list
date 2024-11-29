@@ -6,3 +6,20 @@
 //
 
 import Foundation
+import Alamofire
+
+class AlamofireService: ObservableObject {
+    static let shared = AlamofireService()
+    init(){}
+    func fetchData(completion: @escaping (Task?) -> Void) {
+        AF.request("https://dummyjson.com/todos", method: .get).responseDecodable(of: Task.self) { response in
+            switch response.result {
+            case .success(let data):
+                completion(data)
+            case .failure(let error):
+                print("Decodable error:\(error)")
+            }
+        }
+    }
+}
+

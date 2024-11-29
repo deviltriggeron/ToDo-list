@@ -18,7 +18,3 @@ struct TaskCell: View {
             .padding(.horizontal)
     }
 }
-
-//#Preview {
-//    TaskCell()
-//}

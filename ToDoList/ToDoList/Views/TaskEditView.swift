@@ -51,7 +51,6 @@ struct TaskEditView: View {
                 }
             }
             
-            
             Section() {
                 Button("Save", action: saveAction)
                     .font(.headline)

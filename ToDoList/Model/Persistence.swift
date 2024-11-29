@@ -9,12 +9,17 @@ import CoreData
 
 struct PersistenceController {
     static let shared = PersistenceController()
-
+    let services: AlamofireService = AlamofireService()
     @MainActor
     static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
 
+//        services.fetchData { response in
+//            if let responses = response {
+//                
+//            }
+//        }
         do {
             try viewContext.save()
         } catch {
