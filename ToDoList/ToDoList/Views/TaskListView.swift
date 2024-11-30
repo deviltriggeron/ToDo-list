@@ -16,13 +16,15 @@ struct TaskListView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \TaskItem.dueDate, ascending: true)],
         animation: .default)
     private var items: FetchedResults<TaskItem>
+    @State private var showModal = false
+    @State private var searchText = ""
 
     var body: some View {
         NavigationView {
             VStack {
                 ZStack {
                     List {
-                        ForEach(items) { item in
+                        ForEach(items.filter{ searchText.isEmpty || searchText.contains($0.name ?? "") || searchText.contains($0.desc ?? "") }) { item in
                             NavigationLink(destination: TaskEditView(passedItem: item, initialDate: Date())
                                 .environmentObject(dateHolder)) {
                                     TaskCell(passedItem: item)
@@ -31,27 +33,30 @@ struct TaskListView: View {
                         }
                         .onDelete(perform: deleteItems)
                     }
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            EditButton()
-                        }
-                    }
+                    .searchable(text: $searchText)
+//                    .toolbar {
+//                          ToolbarItem(placement: .navigationBarTrailing) {
+//                              Button("Delete all") {
+//                                  clearDatabase()
+//                              }
+//                          }
+//                      }
                 }
                 ZStack {
-                    Text("\(items.count) tasks")
+                    Text("\(items.count) задач")
                     HStack {
                         NavigationLink(destination: TaskEditView(passedItem: nil, initialDate: Date())
                             .environmentObject(dateHolder)) {
                                 Image(systemName: "square.and.pencil")
                                     .environmentObject(dateHolder)
-                                    
+                                    .font(.system(size: 25))
                         }
-                            .padding()
+                        .frame(width: 44, height: 44)
                     }
                     .frame(maxWidth: .infinity, alignment: .bottomTrailing)
                 }
-                .frame(maxWidth: .infinity, alignment: .bottomTrailing)
-            }.navigationTitle("Tasks")
+            }
+            .navigationTitle("Задачи")
         }
     }
     
@@ -62,6 +67,29 @@ struct TaskListView: View {
             dateHolder.saveContext(viewContext)
         }
     }
+    
+    private func clearDatabase() {
+            let context = viewContext
+            let persistentStoreCoordinator = PersistenceController.shared.container.persistentStoreCoordinator
+
+            for entityName in persistentStoreCoordinator.managedObjectModel.entities.map({ $0.name }).compactMap({ $0 }) {
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+                let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+                do {
+                    try context.execute(batchDeleteRequest)
+                    print("\(entityName) cleared successfully.")
+                } catch {
+                    print("Failed to clear \(entityName): \(error.localizedDescription)")
+                }
+            }
+
+            do {
+                try context.save()
+            } catch {
+                print("Failed to save context after clearing database: \(error.localizedDescription)")
+            }
+        }
 }
 
 private let itemFormatter: DateFormatter = {
@@ -70,7 +98,3 @@ private let itemFormatter: DateFormatter = {
     formatter.timeStyle = .medium
     return formatter
 }()
-
-//#Preview {
-//    TaskListView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-//}

@@ -10,27 +10,75 @@ import XCTest
 final class ToDoListUITests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
 
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
 
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    }
+    
+    func emptyStart() throws -> XCUIApplication  {
         let app = XCUIApplication()
         app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        app.wait(for: .runningForeground, timeout: 10)
+        return app
     }
 
+    func testWelcomeView() throws {
+        let app = try emptyStart()
+        let task = app.staticTexts["Задачи"]
+        
+        XCTAssert(task.exists)
+    }
+    
+    func testButtonView() throws {
+        let app = try emptyStart()
+        let button = app.buttons["square.and.pencil"]
+        
+        XCTAssert(button.exists)
+    }
+    
+    func testAddTask1() throws {
+        let app = try emptyStart()
+        app.buttons["square.and.pencil"].tap()
+        let mainText = app.textFields["Название задачи"]
+        
+        XCTAssert(mainText.exists)
+    }
+        
+    func testAddTask2() throws {
+        let app = try emptyStart()
+        app.buttons["square.and.pencil"].tap()
+        let button = app.buttons["Сохранить"]
+        
+        XCTAssert(button.exists)
+    }
+    
+    func testAddTask3() throws {
+        let app = try emptyStart()
+        app.buttons["square.and.pencil"].tap()
+        
+        let button = app.buttons["Задачи"]
+        
+        XCTAssert(button.exists)
+    }
+    
+    func testSearch1() throws {
+        let app = try emptyStart()
+        let searchBar = app.searchFields["Search"]
+        XCTAssert(searchBar.exists)
+    }
+    
+    func testSearch2() throws {
+        let app = try emptyStart()
+        let searchBar = app.searchFields["Search"]
+        searchBar.tap()
+        searchBar.typeText("11")
+        let value = searchBar.value as? String
+            XCTAssertEqual(value, "11", "Search bar should contain typed text")
+    }
+    
     @MainActor
     func testLaunchPerformance() throws {
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {

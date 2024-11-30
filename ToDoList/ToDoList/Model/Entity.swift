@@ -6,8 +6,8 @@
 //
 
 import Foundation
-//{"todos":[{"id":1,"todo":"Do something nice for someone you care about","completed":false,"userId":152} "total":254,"skip":0,"limit":30}
-struct Todos: Decodable {
+
+struct Todos: Decodable, Identifiable {
     let id: Int
     let todo: String
     let completed: Bool

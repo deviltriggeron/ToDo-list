@@ -24,7 +24,3 @@ struct CheckBoxView: View {
             }
     }
 }
-
-//#Preview {
-//    CheckBoxView()
-//}

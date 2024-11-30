@@ -9,19 +9,21 @@ import CoreData
 
 struct PersistenceController {
     static let shared = PersistenceController()
-    let services: AlamofireService = AlamofireService()
+    
     @MainActor
     static let preview: PersistenceController = {
+        
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
+        var services: AlamofireService = AlamofireService()
+        
+        services.fetchData {
+            print("Data loaded and save to Core Data")
+        }
 
-//        services.fetchData { response in
-//            if let responses = response {
-//                
-//            }
-//        }
         do {
             try viewContext.save()
+
         } catch {
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
@@ -30,6 +32,19 @@ struct PersistenceController {
     }()
 
     let container: NSPersistentCloudKitContainer
+
+
+    static func saveContext() {
+        let context = PersistenceController.shared.container.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            }
+        }
+    }
 
     init(inMemory: Bool = false) {
         container = NSPersistentCloudKitContainer(name: "ToDoList")
