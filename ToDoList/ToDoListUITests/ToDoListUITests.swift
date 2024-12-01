@@ -21,7 +21,6 @@ final class ToDoListUITests: XCTestCase {
     func emptyStart() throws -> XCUIApplication  {
         let app = XCUIApplication()
         app.launch()
-        app.wait(for: .runningForeground, timeout: 10)
         return app
     }
 

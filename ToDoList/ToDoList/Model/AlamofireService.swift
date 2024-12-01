@@ -8,8 +8,6 @@
 import Foundation
 import Alamofire
 
-import Alamofire
-
 class AlamofireService: ObservableObject {
     func fetchData(completion: @escaping () -> Void) {
         AF.request("https://dummyjson.com/todos", method: .get).responseDecodable(of: Task.self) { response in
