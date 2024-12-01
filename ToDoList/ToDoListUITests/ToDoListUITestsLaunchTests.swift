@@ -2,7 +2,7 @@
 //  ToDoListUITestsLaunchTests.swift
 //  ToDoListUITests
 //
-//  Created by Иван Бурцев on 27.11.2024.
+//  Created by Starfighter Dollie on 12/1/24.
 //
 
 import XCTest
@@ -17,7 +17,6 @@ final class ToDoListUITestsLaunchTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    @MainActor
     func testLaunch() throws {
         let app = XCUIApplication()
         app.launch()
